@@ -56,6 +56,9 @@ background-color: rgb(0, 85, 0);
        <height>31</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{border: 3px solid gray; border-radius: 6px; background:argb(47, 47, 47, 130); color:rgb(255, 255, 255);} QLineEdit:hover{border-color:rgb(255,0,127); }</string>
+     </property>
     </widget>
     <widget class="QLabel" name="dateLb">
      <property name="geometry">
@@ -289,7 +292,9 @@ color: rgb(170, 255, 255);</string>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="styleSheet">
-         <string notr="true">image: url(:/weatherIco/location.ico);</string>
+         <string notr="true">image: url(:/weatherIco/location.ico);
+background-color: rgba(255, 255, 255, 0);
+</string>
         </property>
         <property name="text">
          <string/>
@@ -302,8 +307,9 @@ color: rgb(170, 255, 255);</string>
       <item row="0" column="1">
        <widget class="QLabel" name="cityLb">
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;AcadEref&quot;;
-font: 16pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 16pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(255, 255, 255, 0);
+</string>
         </property>
         <property name="text">
          <string>南京</string>
@@ -328,7 +334,8 @@ font: 16pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="1" column="0">
        <widget class="QLabel" name="date0Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>01/01</string>
@@ -354,7 +361,8 @@ font: 16pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="1" column="3">
        <widget class="QLabel" name="date3Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>01/01</string>
@@ -367,7 +375,8 @@ font: 16pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="0" column="3">
        <widget class="QLabel" name="week3Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>后天</string>
@@ -380,7 +389,8 @@ font: 16pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="1" column="1">
        <widget class="QLabel" name="date1Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>01/01</string>
@@ -393,7 +403,8 @@ font: 16pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="1" column="4">
        <widget class="QLabel" name="date4Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>01/01</string>
@@ -442,7 +453,8 @@ font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="0" column="5">
        <widget class="QLabel" name="week5Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>周六</string>
@@ -455,7 +467,8 @@ font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="0" column="1">
        <widget class="QLabel" name="week1Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>今天</string>
@@ -533,7 +546,8 @@ font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="1" column="2">
        <widget class="QLabel" name="date2Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>01/01</string>
@@ -572,7 +586,8 @@ font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
       <item row="0" column="0">
        <widget class="QLabel" name="week0Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>昨天</string>
@@ -621,7 +636,8 @@ color: rgb(170, 0, 0);</string>
       <item row="0" column="4">
        <widget class="QLabel" name="week4Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>周五</string>
@@ -673,7 +689,8 @@ color: rgb(170, 0, 0);</string>
       <item row="1" column="5">
        <widget class="QLabel" name="date5Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>01/01</string>
@@ -686,7 +703,8 @@ color: rgb(170, 0, 0);</string>
       <item row="0" column="2">
        <widget class="QLabel" name="week2Lb">
         <property name="styleSheet">
-         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;</string>
+         <string notr="true">font: 10pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(0, 255, 255, 100);</string>
         </property>
         <property name="text">
          <string>明天</string>
@@ -953,7 +971,8 @@ color: rgb(255, 0, 0);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">image: url(:/weatherIco/leaf.ico);</string>
+      <string notr="true">image: url(:/weatherIco/leaf.ico);
+background-color: rgba(255, 255, 255, 0);</string>
      </property>
      <property name="text">
       <string/>
@@ -962,14 +981,15 @@ color: rgb(255, 0, 0);</string>
     <widget class="QLabel" name="temLb">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>80</y>
+       <x>50</x>
+       <y>70</y>
        <width>151</width>
        <height>101</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 38pt &quot;阿里巴巴普惠体 M&quot;;</string>
+      <string notr="true">font: 38pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(255, 255, 255, 0);</string>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;9℃&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -987,6 +1007,9 @@ color: rgb(255, 0, 0);</string>
        <height>20</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     </property>
      <property name="text">
       <string>优</string>
      </property>
@@ -997,14 +1020,15 @@ color: rgb(255, 0, 0);</string>
     <widget class="QLabel" name="typeLb">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>130</y>
+       <x>200</x>
+       <y>120</y>
        <width>41</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 16pt &quot;阿里巴巴普惠体 M&quot;;</string>
+      <string notr="true">font: 16pt &quot;阿里巴巴普惠体 M&quot;;
+background-color: rgba(255, 255, 255, 0);</string>
      </property>
      <property name="text">
       <string>晴</string>
@@ -1122,14 +1146,17 @@ background-color: argb(60, 60, 60, 0);</string>
     <widget class="QToolButton" name="searchBt">
      <property name="geometry">
       <rect>
-       <x>722</x>
-       <y>15</y>
-       <width>20</width>
-       <height>20</height>
+       <x>718</x>
+       <y>12</y>
+       <width>25</width>
+       <height>25</height>
       </rect>
      </property>
      <property name="cursor">
       <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
      </property>
      <property name="text">
       <string/>
@@ -1137,6 +1164,12 @@ background-color: argb(60, 60, 60, 0);</string>
      <property name="icon">
       <iconset resource="icons/icons.qrc">
        <normaloff>:/weatherIco/search.ico</normaloff>:/weatherIco/search.ico</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>25</width>
+       <height>25</height>
+      </size>
      </property>
     </widget>
     <widget class="QLabel" name="sunRiseSetLb">
