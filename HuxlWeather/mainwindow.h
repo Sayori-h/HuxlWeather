@@ -11,6 +11,7 @@
 #include <QNetworkRequest>
 #include <QUrl>
 #include "weathertool.h"
+#include "weatherdata.h"
 #include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
@@ -33,6 +34,7 @@ private slots:
     void replayFinished(QNetworkReply*reply);
 private:
     void getWeatherInfo(QNetworkAccessManager *manager);
+    void parseJson(QByteArray& bytes);
 private:
     Ui::MainWindow *ui;
     QMenu *m_pExitMenu;
@@ -46,6 +48,9 @@ private:
     QList<QLabel *> forecast_typeIco_list;      // 天气图标
     QList<QLabel *> forecast_high_list;         // 高温
     QList<QLabel *> forecast_low_list;          // 低温
+
+    Today today;
+    Forecast forecast[6];
 
     QString url;        // 接口链接
     QString city;       // 访问的城市

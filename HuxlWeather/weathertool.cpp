@@ -18,6 +18,9 @@ WeatherTool::WeatherTool()
     //读取Json数据
     QJsonParseError err;
     QJsonDocument jsonDoc=QJsonDocument::fromJson(json,&err);
+    if(err.error!=QJsonParseError::NoError)//Json格式错误
+        std::runtime_error("Json format error!");
+
     //获取城市列表数组，当前这个JSON是一个array，Doc转成array
     QJsonArray citys=jsonDoc.array();
     for(int i=0;i<citys.size();i++){

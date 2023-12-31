@@ -75,7 +75,8 @@ void MainWindow::replayFinished(QNetworkReply *reply)
         return;
     }
     QByteArray bytes=reply->readAll();
-    //parseJson(bytes);
+    //qDebug()<<bytes;
+    parseJson(bytes);
 }
 
 void MainWindow::getWeatherInfo(QNetworkAccessManager *manager)
@@ -87,5 +88,38 @@ void MainWindow::getWeatherInfo(QNetworkAccessManager *manager)
     }
     QUrl jsonUrl(url+cityCode);
     manager->get(QNetworkRequest(jsonUrl));
+}
+
+/* 解析Json数据 */
+void MainWindow::parseJson(QByteArray& bytes)
+{
+    //读取Json数据
+    QJsonParseError err;
+    QJsonDocument jsonDoc=QJsonDocument::fromJson(bytes,&err);
+    if(err.error!=QJsonParseError::NoError)return;
+
+    QJsonObject jsObj=jsonDoc.object();
+    qDebug()<<jsObj;
+    qDebug()<<"==========================================\r\n";
+    qDebug()<<jsObj.value("message").toString();
+    QString message=jsObj.value("message").toString();
+    if(!message.contains("success")){
+        QMessageBox::information(this,u8"来自Json的信息",u8"天气：城市错误！",QMessageBox::Ok);
+        city=cityTmp;
+        return;
+    }
+    today=jsObj;
+
+    //解析data中的yesterday
+    QJsonObject dataObj=jsObj.value("data").toObject();
+    forecast[0]=dataObj.value("yesterday").toObject();
+
+    //解析data中的forecast
+    QJsonArray forecastArr=dataObj.value("foecast").toArray();
+    int j=0;
+    for(int i=1;i<6;i++){
+        forecast[i]=forecastArr.at(j).toObject();
+        j++;
+    }
 }
 
