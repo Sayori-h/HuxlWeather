@@ -33,6 +33,12 @@ MainWindow::MainWindow(QWidget *parent)
     manager=new QNetworkAccessManager(this);
     connect(manager,&QNetworkAccessManager::finished,this,&MainWindow::replayFinished);
     getWeatherInfo(manager);
+
+    ui->sunRiseSetLb->installEventFilter(this);
+
+    sunTimer=new QTimer(ui->sunRiseSetLb);
+    connect(sunTimer,&QTimer::timeout,ui->sunRiseSetLb,QOverload<>::of(&QWidget::update));
+    sunTimer->start(1000);
 }
 
 MainWindow::~MainWindow()
@@ -120,6 +126,146 @@ void MainWindow::parseJson(QByteArray& bytes)
     for(int i=1;i<6;i++){
         forecast[i]=forecastArr.at(j).toObject();
         j++;
+    }
+}
+
+void MainWindow::setLabelContent()
+{
+    // 今日数据
+    ui->dateLb->setText(today.date);
+    ui->temLb->setText(today.wendu);
+    ui->cityLb->setText(today.city);
+    ui->typeLb->setText(today.type);
+    ui->noticeLb->setText(today.notice);
+    ui->shiduLb->setText(today.shidu);
+    ui->pm25Lb->setText(today.pm25);
+    ui->fxLb->setText(today.fx);
+    ui->flLb->setText(today.fl);
+    ui->ganmaoBrowser->setText(today.ganmao);
+
+    //六天数据
+    for(int i=0;i<6;i++){
+        forecast_week_list[i]->setText(forecast[i].week);
+        forecast_date_list[i]->setText(forecast[i].date);
+        forecast_type_list[i]->setText(forecast[i].type);
+        forecast_high_list[i]->setText(forecast[i].high.split(" ").at(1));
+        forecast_low_list[i]->setText(forecast[i].low.split(" ").at(1));
+        forecast_typeIco_list[i]->setStyleSheet(tr("image: url(:day/day/%1.png);").arg(forecast[i].type));
+
+        int aqiValue=forecast[i].aqi.toInt();
+        forecast_aqi_list[i]->setText(getAirQualityLevel(aqiValue));
+
+        if (forecast[i].aqi.toInt() >= 0 && forecast[i].aqi.toInt() <= 50) {
+            forecast_aqi_list[i]->setText(u8"优质");
+            forecast_aqi_list[i]->setStyleSheet("color: rgb(0, 255, 0);");
+        }
+        else if (forecast[i].aqi.toInt() > 50 && forecast[i].aqi.toInt() <= 100){
+            forecast_aqi_list[i]->setText(u8"良好");
+            forecast_aqi_list[i]->setStyleSheet("color: rgb(255, 255, 0);");
+        }
+        else if (forecast[i].aqi.toInt() > 100 && forecast[i].aqi.toInt() <= 150){
+            forecast_aqi_list[i]->setText(u8"轻度污染");
+            forecast_aqi_list[i]->setStyleSheet("color: rgb(255, 170, 0);");
+        }
+        else if (forecast[i].aqi.toInt() > 150 && forecast[i].aqi.toInt() <= 200){
+            forecast_aqi_list[i]->setText(u8"重度污染");
+            forecast_aqi_list[i]->setStyleSheet("color: rgb(255, 0, 0);");
+        }
+        else{
+            forecast_aqi_list[i]->setText(u8"严重污染");
+            forecast_aqi_list[i]->setStyleSheet("color: rgb(170, 0, 0);");
+        }
+    }
+
+    ui->week0Lb->setText(u8"昨天");
+    ui->week1Lb->setText(u8"今天");
+    return;
+}
+
+const QPoint MainWindow::sun[2]={
+    QPoint(20,75),QPoint(130,75)
+};
+
+const QRect MainWindow::sunRiseSet[3]={
+    //x,y,width,height
+    QRect(0,80,50,20),//07:20
+    QRect(100,80,50,20),//18:01
+    QRect(50,80,50,20)//日出日落
+};
+
+//绘制虚线圆弧的矩形区域
+const QRect MainWindow::arcRect=QRect(25,25,100,100);
+
+void MainWindow::paintSunRiseSet()
+{
+    QPainter painter(ui->sunRiseSetLb);
+    painter.setRenderHint(QPainter::Antialiasing,true);
+
+    //绘制直线
+    painter.save();
+    QPen pen=painter.pen();
+    pen.setWidthF(1.5);
+    pen.setColor(Qt::cyan);
+    painter.setPen(pen);
+    painter.drawLine(sun[0],sun[1]);
+    painter.restore();
+
+    // 绘制文字
+    painter.save();
+    painter.setFont(QFont("阿里巴巴普惠体 M",8,QFont::Normal));
+    painter.setPen(Qt::white);
+
+    // 有日出日落时间才绘制
+    if(today.sunrise!=""&&today.sunset!=""){
+        // 在指定区域绘制文字
+        painter.drawText(sunRiseSet[0],Qt::AlignHCenter,today.sunrise);
+        painter.drawText(sunRiseSet[1],Qt::AlignHCenter,today.sunset);
+    }
+    painter.drawText(sunRiseSet[2],Qt::AlignHCenter,u8"日出日落");
+    painter.restore();
+
+    // 绘制圆弧
+    painter.save();
+    pen.setWidthF(1.5);
+    pen.setStyle(Qt::DotLine);
+    pen.setColor(Qt::yellow);
+    painter.setPen(pen);
+    painter.drawArc(arcRect,0,180*16);
+    painter.restore();
+
+    // 绘制日出日落占比
+    if(today.sunrise!=""&&today.sunset!=""){
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QColor(170,255,127,100));
+
+        int stAngle,spanAngle;// 起始角度，旋转角度
+        QString sunsetTime=today.date+" "+today.sunset;
+        if(QDateTime::currentDateTime()
+                >QDateTime::fromString(sunsetTime,"yyyy-MM-dd hh:mm"))
+        {
+            stAngle=0;
+            spanAngle=180*16;
+        }
+        else{
+            // 计算起始角度和跨越角度
+            static QStringList sunSetTime=today.sunset.split(":");
+            static QStringList sunRiseTime=today.sunrise.split(":");
+
+            static QString sunSetHour=sunSetTime[0];
+            static QString sunSetMin=sunSetTime[1];
+            static QString sunRiseHour=sunRiseTime[0];
+            static QString sunRiseMin=sunRiseTime[1];
+
+            static int sun_rise=sunRiseHour.toInt()*60+sunRiseMin.toInt();
+            static int sun_set=sunSetHour.toInt()*60+sunSetMin.toInt();
+            static int sun_time=sun_set-sun_rise;
+            int now=QTime::currentTime().hour()*60+QTime::currentTime().minute();
+
+            stAngle=((double)(sun_set-now)/sun_time)*180*16;
+            spanAngle=((double)(now-sun_rise)/sun_time)*180*16;
+        }
+        if(stAngle>=0&&spanAngle>=0)
+            painter.drawPie(arcRect,stAngle,spanAngle);//扇形绘制
     }
 }
 

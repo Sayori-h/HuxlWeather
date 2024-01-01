@@ -13,6 +13,8 @@
 #include "weathertool.h"
 #include "weatherdata.h"
 #include <QMessageBox>
+#include <QPainter>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -35,6 +37,9 @@ private slots:
 private:
     void getWeatherInfo(QNetworkAccessManager *manager);
     void parseJson(QByteArray& bytes);
+    void setLabelContent();
+    QString getAirQualityLevel(int aqi);
+    void paintSunRiseSet();
 private:
     Ui::MainWindow *ui;
     QMenu *m_pExitMenu;
@@ -57,5 +62,11 @@ private:
     QString cityTmp;    // 临时存放城市变量，防止输入错误城市的时候，原来的城市名称还在。
     WeatherTool tool;   // 天气工具对象
     QNetworkAccessManager *manager;
+
+    static const QPoint sun[2];//直线的两点
+    static const QRect sunRiseSet[3];//"日出/日落时间"文本框位置
+    static const QRect arcRect;//绘制日出日落圆弧的矩形区域
+
+    QTimer *sunTimer;//通过定时器定时重绘日出日落扇形图
 };
 #endif // MAINWINDOW_H

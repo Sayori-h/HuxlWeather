@@ -1182,7 +1182,7 @@ background-color: argb(60, 60, 60, 0);</string>
       </rect>
      </property>
      <property name="text">
-      <string>日出日落图</string>
+      <string/>
      </property>
     </widget>
    </widget>
