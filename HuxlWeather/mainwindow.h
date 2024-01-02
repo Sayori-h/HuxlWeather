@@ -1,5 +1,9 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+// 高温平均值起始坐标
+#define TEMPERATURE_STARTING_COORDINATE 30
+#define SPAN_INDEX 5// 温度曲线间隔指数
+#define ORIGIN_SIZE 3// 温度曲线坐标点大小
 
 #include <QMainWindow>
 #include <QMenu>
@@ -31,15 +35,20 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    bool eventFilter(QObject *watched,QEvent *event) override;
 private slots:
     void slotExitApp();
     void replayFinished(QNetworkReply*reply);
+    void on_refreshBt_clicked();
+
+    void on_searchBt_clicked();
+
 private:
     void getWeatherInfo(QNetworkAccessManager *manager);
     void parseJson(QByteArray& bytes);
     void setLabelContent();
-    QString getAirQualityLevel(int aqi);
     void paintSunRiseSet();
+    void paintCurve();
 private:
     Ui::MainWindow *ui;
     QMenu *m_pExitMenu;

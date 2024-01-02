@@ -30,7 +30,7 @@ Today &Today::operator=(const QJsonObject &obj)
 {
     QString dateStr=obj.value("date").toString();
     date=QDate::fromString(dateStr,"yyyyMMdd").toString("yyyy-MM-dd");
-
+    //qDebug()<<"operator=date:"<<date;
     city=obj.value("cityInfo").toObject().value("city").toString();
 
     // 解析data
@@ -60,8 +60,8 @@ Forecast::Forecast()
     aqi = "0";
     date = u8"00日星期0";
     week = u8"星期0";
-    high = u8"高温 0.0℃";
-    low = u8"低温 0.0℃";
+    high = u8"高温 0℃";
+    low = u8"低温 0℃";
     type = "undefined";
 }
 

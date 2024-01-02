@@ -907,19 +907,6 @@ color: rgb(255, 0, 0);</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1" rowspan="2">
-       <widget class="QLabel" name="typeIco1Lb">
-        <property name="styleSheet">
-         <string notr="true">image: url(:/day/day/阴.png);</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="2" rowspan="2">
        <widget class="QLabel" name="typeIco2Lb">
         <property name="styleSheet">
@@ -948,6 +935,19 @@ color: rgb(255, 0, 0);</string>
       </item>
       <item row="4" column="4" rowspan="2">
        <widget class="QLabel" name="typeIco4Lb">
+        <property name="styleSheet">
+         <string notr="true">image: url(:/day/day/阴.png);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" rowspan="2">
+       <widget class="QLabel" name="typeIco1Lb">
         <property name="styleSheet">
          <string notr="true">image: url(:/day/day/阴.png);</string>
         </property>
@@ -1020,9 +1020,9 @@ background-color: rgba(255, 255, 255, 0);</string>
     <widget class="QLabel" name="typeLb">
      <property name="geometry">
       <rect>
-       <x>200</x>
-       <y>120</y>
-       <width>41</width>
+       <x>180</x>
+       <y>130</y>
+       <width>91</width>
        <height>41</height>
       </rect>
      </property>
@@ -1062,6 +1062,9 @@ background-color: argb(60, 60, 60, 0);</string>
        <width>351</width>
        <height>21</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
      </property>
      <property name="text">
       <string>天气提示</string>
@@ -1107,7 +1110,11 @@ background-color: argb(60, 60, 60, 0);</string>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QTextBrowser" name="ganmaoBrowser"/>
+       <widget class="QTextBrowser" name="ganmaoBrowser">
+        <property name="styleSheet">
+         <string notr="true">font: 10pt &quot;陈继世-硬笔行书&quot;;</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -1185,6 +1192,26 @@ background-color: argb(60, 60, 60, 0);</string>
       <string/>
      </property>
     </widget>
+    <zorder>cityLineEdit</zorder>
+    <zorder>dateLb</zorder>
+    <zorder>hLine_1</zorder>
+    <zorder>hLine_10</zorder>
+    <zorder>hLine_11</zorder>
+    <zorder>label_4</zorder>
+    <zorder>gridLayoutWidget</zorder>
+    <zorder>gridLayoutWidget_2</zorder>
+    <zorder>gridLayoutWidget_3</zorder>
+    <zorder>leafLb</zorder>
+    <zorder>temLb</zorder>
+    <zorder>qualityLb</zorder>
+    <zorder>typeIcoLb</zorder>
+    <zorder>noticeLb</zorder>
+    <zorder>vLine_1</zorder>
+    <zorder>gridLayoutWidget_4</zorder>
+    <zorder>refreshBt</zorder>
+    <zorder>searchBt</zorder>
+    <zorder>sunRiseSetLb</zorder>
+    <zorder>typeLb</zorder>
    </widget>
   </widget>
  </widget>

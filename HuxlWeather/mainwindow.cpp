@@ -34,11 +34,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(manager,&QNetworkAccessManager::finished,this,&MainWindow::replayFinished);
     getWeatherInfo(manager);
 
+    ui->cityLineEdit->installEventFilter(this);
+    ui->curveLb->installEventFilter(this);
     ui->sunRiseSetLb->installEventFilter(this);
 
     sunTimer=new QTimer(ui->sunRiseSetLb);
     connect(sunTimer,&QTimer::timeout,ui->sunRiseSetLb,QOverload<>::of(&QWidget::update));
     sunTimer->start(1000);
+
+
 }
 
 MainWindow::~MainWindow()
@@ -61,6 +65,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     move(event->globalPos()-m_Pos);
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if(watched==ui->sunRiseSetLb&&event->type()==QEvent::Paint)
+        paintSunRiseSet();
+    else if(watched==ui->curveLb&&event->type()==QEvent::Paint)
+        paintCurve();
+    return QWidget::eventFilter(watched,event);
 }
 
 void MainWindow::slotExitApp()
@@ -105,9 +118,9 @@ void MainWindow::parseJson(QByteArray& bytes)
     if(err.error!=QJsonParseError::NoError)return;
 
     QJsonObject jsObj=jsonDoc.object();
-    qDebug()<<jsObj;
-    qDebug()<<"==========================================\r\n";
-    qDebug()<<jsObj.value("message").toString();
+    //qDebug()<<jsObj;
+    //qDebug()<<"==========================================\r\n";
+    //qDebug()<<jsObj.value("message").toString();
     QString message=jsObj.value("message").toString();
     if(!message.contains("success")){
         QMessageBox::information(this,u8"来自Json的信息",u8"天气：城市错误！",QMessageBox::Ok);
@@ -115,70 +128,113 @@ void MainWindow::parseJson(QByteArray& bytes)
         return;
     }
     today=jsObj;
-
+    //qDebug()<<"parseJson:"<<today.ganmao;
     //解析data中的yesterday
     QJsonObject dataObj=jsObj.value("data").toObject();
     forecast[0]=dataObj.value("yesterday").toObject();
 
     //解析data中的forecast
-    QJsonArray forecastArr=dataObj.value("foecast").toArray();
+    QJsonArray forecastArr=dataObj.value("forecast").toArray();
     int j=0;
     for(int i=1;i<6;i++){
         forecast[i]=forecastArr.at(j).toObject();
         j++;
     }
+    setLabelContent();
 }
 
 void MainWindow::setLabelContent()
 {
     // 今日数据
     ui->dateLb->setText(today.date);
+    qDebug()<<"Out:"<<today.date;
     ui->temLb->setText(today.wendu);
+    qDebug()<<"Out:"<<today.wendu;
     ui->cityLb->setText(today.city);
     ui->typeLb->setText(today.type);
     ui->noticeLb->setText(today.notice);
     ui->shiduLb->setText(today.shidu);
+    qDebug()<<"Out:"<<today.shidu;
     ui->pm25Lb->setText(today.pm25);
     ui->fxLb->setText(today.fx);
     ui->flLb->setText(today.fl);
     ui->ganmaoBrowser->setText(today.ganmao);
 
+    // 判断白天还是夜晚图标
+    QString sunsetTime = today.date + " " + today.sunset;
+    if (QDateTime::currentDateTime() <= QDateTime::fromString(sunsetTime, "yyyy-MM-dd hh:mm"))
+    {
+        ui->typeIcoLb->setStyleSheet( tr("border-image: url(:/day/day/%1.png); background-color: argb(60, 60, 60, 0);").arg(today.type) );
+    }
+    else
+    {
+        ui->typeIcoLb->setStyleSheet( tr("border-image: url(:/night/night/%1.png); background-color: argb(60, 60, 60, 0);").arg(today.type) );
+    }
+
+    ui->qualityLb->setText(today.quality == "" ? "无" : today.quality);
+    if (today.quality == "优")
+    {
+        ui->qualityLb->setStyleSheet("color: rgb(0, 255, 0); background-color: argb(255, 255, 255, 0);");
+    }
+    else if (today.quality == "良")
+    {
+        ui->qualityLb->setStyleSheet("color: rgb(255, 255, 0); background-color: argb(255, 255, 255, 0);");
+    }
+    else if (today.quality == "轻度污染")
+    {
+        ui->qualityLb->setStyleSheet("color: rgb(255, 170, 0); background-color: argb(255, 255, 255, 0);");
+    }
+    else if (today.quality == "重度污染")
+    {
+        ui->qualityLb->setStyleSheet("color: rgb(255, 0, 0); background-color: argb(255, 255, 255, 0);");
+    }
+    else if (today.quality == "严重污染")
+    {
+        ui->qualityLb->setStyleSheet("color: rgb(170, 0, 0); background-color: argb(255, 255, 255, 0);");
+    }
+    else
+    {
+        ui->qualityLb->setStyleSheet("color: rgb(255, 255, 255); background-color: argb(255, 255, 255, 0);");
+    }
+
     //六天数据
     for(int i=0;i<6;i++){
-        forecast_week_list[i]->setText(forecast[i].week);
-        forecast_date_list[i]->setText(forecast[i].date);
-        forecast_type_list[i]->setText(forecast[i].type);
-        forecast_high_list[i]->setText(forecast[i].high.split(" ").at(1));
-        forecast_low_list[i]->setText(forecast[i].low.split(" ").at(1));
-        forecast_typeIco_list[i]->setStyleSheet(tr("image: url(:day/day/%1.png);").arg(forecast[i].type));
-
-        int aqiValue=forecast[i].aqi.toInt();
-        forecast_aqi_list[i]->setText(getAirQualityLevel(aqiValue));
+        forecast_week_list.at(i)->setText(forecast[i].week);
+        forecast_date_list.at(i)->setText(forecast[i].date);
+        forecast_type_list.at(i)->setText(forecast[i].type);
+        qDebug()<<"i="<<i<<forecast[i].type;
+        forecast_high_list.at(i)->setText(forecast[i].high.split(" ").at(1));
+        qDebug()<<"i="<<i<<forecast[i].high.split(" ").at(1);
+        forecast_low_list.at(i)->setText(forecast[i].low.split(" ").at(1));
+        forecast_typeIco_list.at(i)->setStyleSheet(tr("image: url(:day/day/%1.png);").arg(forecast[i].type));
 
         if (forecast[i].aqi.toInt() >= 0 && forecast[i].aqi.toInt() <= 50) {
-            forecast_aqi_list[i]->setText(u8"优质");
-            forecast_aqi_list[i]->setStyleSheet("color: rgb(0, 255, 0);");
+            forecast_aqi_list.at(i)->setText(u8"优质");
+            forecast_aqi_list.at(i)->setStyleSheet("color: rgb(0, 255, 0);");
         }
         else if (forecast[i].aqi.toInt() > 50 && forecast[i].aqi.toInt() <= 100){
-            forecast_aqi_list[i]->setText(u8"良好");
-            forecast_aqi_list[i]->setStyleSheet("color: rgb(255, 255, 0);");
+            forecast_aqi_list.at(i)->setText(u8"良好");
+            forecast_aqi_list.at(i)->setStyleSheet("color: rgb(255, 255, 0);");
         }
         else if (forecast[i].aqi.toInt() > 100 && forecast[i].aqi.toInt() <= 150){
-            forecast_aqi_list[i]->setText(u8"轻度污染");
-            forecast_aqi_list[i]->setStyleSheet("color: rgb(255, 170, 0);");
+            forecast_aqi_list.at(i)->setText(u8"轻度污染");
+            forecast_aqi_list.at(i)->setStyleSheet("color: rgb(255, 170, 0);");
         }
         else if (forecast[i].aqi.toInt() > 150 && forecast[i].aqi.toInt() <= 200){
-            forecast_aqi_list[i]->setText(u8"重度污染");
-            forecast_aqi_list[i]->setStyleSheet("color: rgb(255, 0, 0);");
+            forecast_aqi_list.at(i)->setText(u8"重度污染");
+            forecast_aqi_list.at(i)->setStyleSheet("color: rgb(255, 0, 0);");
         }
         else{
-            forecast_aqi_list[i]->setText(u8"严重污染");
-            forecast_aqi_list[i]->setStyleSheet("color: rgb(170, 0, 0);");
+            forecast_aqi_list.at(i)->setText(u8"严重污染");
+            forecast_aqi_list.at(i)->setStyleSheet("color: rgb(170, 0, 0);");
         }
+
     }
 
     ui->week0Lb->setText(u8"昨天");
     ui->week1Lb->setText(u8"今天");
+
+    ui->curveLb->update();
     return;
 }
 
@@ -267,5 +323,97 @@ void MainWindow::paintSunRiseSet()
         if(stAngle>=0&&spanAngle>=0)
             painter.drawPie(arcRect,stAngle,spanAngle);//扇形绘制
     }
+}
+
+void MainWindow::paintCurve()
+{
+    QPainter painter(ui->curveLb);
+    painter.setRenderHint(QPainter::Antialiasing,true);
+
+    // 将温度转换为int类型，并计算平均值，平均值作为curveLb曲线的参考值，参考Y坐标为40
+    int tempTotal=0;
+    int high[6]{},low[6]{};
+
+    QString h,l;
+    for(int i=0;i<6;i++){
+        h=forecast[i].high.split(" ").at(1);
+        h=h.left(h.length()-1);
+        high[i]=(int)(h.toDouble());
+        tempTotal+=high[i];
+
+        l=forecast[i].low.split(" ").at(1);
+        l=l.left(l.length()-1);
+        low[i]=(int)(l.toDouble());
+    }
+    int tempAverage=(int)(tempTotal/6);// 最高温平均值
+
+    // 算出温度对应坐标
+    int pX[6]{35,103,172,241,310,379};// 点X的坐标
+    int pHY[6]{},pLY[6]{};
+    //求出高低温点的坐标
+    for(int i=0;i<6;i++){
+        pHY[i]=TEMPERATURE_STARTING_COORDINATE-((high[i]-tempAverage)*SPAN_INDEX);
+        pLY[i]=TEMPERATURE_STARTING_COORDINATE+((tempAverage-low[i])*SPAN_INDEX);
+    }
+
+    QPen pen=painter.pen();
+    pen.setWidthF(1.5);
+
+    // 高温曲线绘制
+    //绘制昨天-今天虚线部分
+    painter.save();
+    pen.setColor(QColor(255,170,0));
+    pen.setStyle(Qt::DotLine);
+    painter.setPen(pen);
+    //画温度点
+    painter.setBrush(QColor(255, 170, 0));
+    painter.drawEllipse(QPoint(pX[0],pHY[0]),ORIGIN_SIZE,ORIGIN_SIZE);
+    painter.drawEllipse(QPoint(pX[1],pHY[1]),ORIGIN_SIZE,ORIGIN_SIZE);
+    //连线
+    painter.drawLine(pX[0],pHY[0],pX[1],pHY[1]);
+
+    //绘制今天之后的实线部分
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
+    for(int i=1;i<5;i++){
+        painter.drawEllipse(QPoint(pX[i+1],pHY[i+1]),ORIGIN_SIZE,ORIGIN_SIZE);
+        painter.drawLine(pX[i],pHY[i],pX[i+1],pHY[i+1]);
+    }
+    painter.restore();
+
+    // 低温曲线绘制
+    //绘制昨天-今天虚线部分
+    pen.setColor(QColor(0,255,255));
+    pen.setStyle(Qt::DotLine);
+    painter.setPen(pen);
+    //画温度点
+    painter.setBrush(QColor(0,255,255));
+    painter.drawEllipse(QPoint(pX[0],pLY[0]),ORIGIN_SIZE,ORIGIN_SIZE);
+    painter.drawEllipse(QPoint(pX[1],pLY[1]),ORIGIN_SIZE,ORIGIN_SIZE);
+    //连线
+    painter.drawLine(pX[0],pLY[0],pX[1],pLY[1]);
+
+    //绘制今天之后的实线部分
+    pen.setStyle(Qt::SolidLine);
+    painter.setPen(pen);
+    for(int i=1;i<5;i++){
+        painter.drawEllipse(QPoint(pX[i+1],pLY[i+1]),ORIGIN_SIZE,ORIGIN_SIZE);
+        painter.drawLine(pX[i],pLY[i],pX[i+1],pLY[i+1]);
+    }
+}
+
+
+void MainWindow::on_refreshBt_clicked()
+{
+    getWeatherInfo(manager);
+    ui->curveLb->update();
+}
+
+
+void MainWindow::on_searchBt_clicked()
+{
+    cityTmp=city;
+    city=ui->cityLineEdit->text();
+    getWeatherInfo(manager);
 }
 

@@ -9,6 +9,7 @@
 #include <QJsonValue>
 #include <QJsonArray>
 #include <QDateTime>
+#include <QDebug>
 
 class Today//当日天气预报的数据
 {
