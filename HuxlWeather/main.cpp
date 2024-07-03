@@ -4,7 +4,7 @@
 #include <QLocale>
 #include <QTranslator>
 #include "weathertool.h"
-
+//git  拉取修改
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
